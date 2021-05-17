@@ -1,0 +1,253 @@
+{
+  "cities": [
+    {
+      "name": "Barcelona",
+      "address": "Barcelona, Spain",
+      "country": "ES",
+      "latitude": 41.3850639,
+      "longitude": 2.1734035
+    },
+    {
+      "name": "Valencia",
+      "address": "Valencia, Spain",
+      "country": "ES",
+      "latitude": 39.4699075,
+      "longitude": -0.3762881
+    },
+    {
+      "name": "Murcia",
+      "address": "Murcia, Spain",
+      "country": "ES",
+      "latitude": 37.9922399,
+      "longitude": -1.1306544
+    },
+    {
+      "name": "Málaga",
+      "address": "Málaga, Spain",
+      "country": "ES",
+      "latitude": 36.7211784,
+      "longitude": -4.421719899999999
+    },
+    {
+      "name": "Seville",
+      "address": "Seville, Spain",
+      "country": "ES",
+      "latitude": 37.3890924,
+      "longitude": -5.9844589
+    },
+    {
+      "name": "Salamanca",
+      "address": "Salamanca, Spain",
+      "country": "ES",
+      "latitude": 40.9701039,
+      "longitude": -5.663539699999999
+    },
+    {
+      "name": "Madrid",
+      "address": "Madrid, Spain",
+      "country": "ES",
+      "latitude": 40.4167754,
+      "longitude": -3.7037902
+    },
+    {
+      "name": "Zaragoza",
+      "address": "Zaragoza, Spain",
+      "country": "ES",
+      "latitude": 41.6488226,
+      "longitude": -0.8890853
+    },
+    {
+      "name": "Pamplona",
+      "address": "Pamplona, Navarre, Spain",
+      "country": "ES",
+      "latitude": 42.812526,
+      "longitude": -1.6457745
+    },
+    {
+      "name": "Valladolid",
+      "address": "Valladolid, Spain",
+      "country": "ES",
+      "latitude": 41.652251,
+      "longitude": -4.724532099999999
+    },
+    {
+      "name": "Bilbao",
+      "address": "Bilbao, Biscay, Spain",
+      "country": "ES",
+      "latitude": 43.2630126,
+      "longitude": -2.9349852
+    },
+    {
+      "name": "León",
+      "address": "León, Spain",
+      "country": "ES",
+      "latitude": 42.5987263,
+      "longitude": -5.5670959
+    },
+    {
+      "name": "A Coruña",
+      "address": "A Coruña, Spain",
+      "country": "ES",
+      "latitude": 43.3623436,
+      "longitude": -8.4115401
+    }
+  ],
+  "connections": [
+    {
+      "from": "Barcelona",
+      "to": "Valencia",
+      "distance": 349571,
+      "duration": 13679
+    },
+    {
+      "from": "Barcelona",
+      "to": "Zaragoza",
+      "distance": 311204,
+      "duration": 11788
+    },
+    {
+      "from": "Valencia",
+      "to": "Barcelona",
+      "distance": 349872,
+      "duration": 13395
+    },
+    {
+      "from": "Valencia",
+      "to": "Murcia",
+      "distance": 227481,
+      "duration": 8822
+    },
+    {
+      "from": "Murcia",
+      "to": "Valencia",
+      "distance": 227730,
+      "duration": 9001
+    },
+    {
+      "from": "Murcia",
+      "to": "Málaga",
+      "distance": 408012,
+      "duration": 14694
+    },
+    {
+      "from": "Málaga",
+      "to": "Seville",
+      "distance": 205844,
+      "duration": 8261
+    },
+    {
+      "from": "Seville",
+      "to": "Málaga",
+      "distance": 213531,
+      "duration": 8427
+    },
+    {
+      "from": "Seville",
+      "to": "Salamanca",
+      "distance": 464089,
+      "duration": 16629
+    },
+    {
+      "from": "Salamanca",
+      "to": "Seville",
+      "distance": 461715,
+      "duration": 16263
+    },
+    {
+      "from": "Salamanca",
+      "to": "Madrid",
+      "distance": 214231,
+      "duration": 7969
+    },
+    {
+      "from": "Madrid",
+      "to": "Salamanca",
+      "distance": 213178,
+      "duration": 8160
+    },
+    {
+      "from": "Madrid",
+      "to": "Zaragoza",
+      "distance": 313641,
+      "duration": 11610
+    },
+    {
+      "from": "Zaragoza",
+      "to": "Barcelona",
+      "distance": 312326,
+      "duration": 11433
+    },
+    {
+      "from": "Zaragoza",
+      "to": "Madrid",
+      "distance": 320724,
+      "duration": 12303
+    },
+    {
+      "from": "Zaragoza",
+      "to": "Pamplona",
+      "distance": 177747,
+      "duration": 6936
+    },
+    {
+      "from": "Valladolid",
+      "to": "Salamanca",
+      "distance": 122796,
+      "duration": 5220
+    },
+    {
+      "from": "Valladolid",
+      "to": "León",
+      "distance": 139036,
+      "duration": 6351
+    },
+    {
+      "from": "León",
+      "to": "Valladolid",
+      "distance": 140643,
+      "duration": 6489
+    },
+    {
+      "from": "León",
+      "to": "A Coruña",
+      "distance": 318046,
+      "duration": 11646
+    },
+    {
+      "from": "A Coruña",
+      "to": "Bilbao",
+      "distance": 541994,
+      "duration": 19402
+    },
+    {
+      "from": "A Coruña",
+      "to": "León",
+      "distance": 318015,
+      "duration": 11605
+    },
+    {
+      "from": "Bilbao",
+      "to": "Pamplona",
+      "distance": 155386,
+      "duration": 6322
+    },
+    {
+      "from": "Bilbao",
+      "to": "A Coruña",
+      "distance": 542519,
+      "duration": 19485
+    },
+    {
+      "from": "Pamplona",
+      "to": "Zaragoza",
+      "distance": 178001,
+      "duration": 6807
+    },
+    {
+      "from": "Pamplona",
+      "to": "Bilbao",
+      "distance": 154921,
+      "duration": 6488
+    }
+  ]
+}

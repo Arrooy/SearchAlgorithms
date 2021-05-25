@@ -1,3 +1,4 @@
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Scanner;
 
@@ -53,7 +54,7 @@ public class Main {
             //BCN - VAL - MUR
             origin = tree.getCity("Barcelona");
             destination = tree.getCity("Murcia");
-            algorithm = tree.getAlgorithm("DFS");
+            algorithm = tree.getAlgorithm("A*");
         }
         // Ja sabem el Node origen, el node desti i el algoritme a aplicar.
         LinkedList<TreeNode> cami_mes_curt = tree.compute(origin, destination, algorithm);
@@ -72,6 +73,10 @@ public class Main {
 
         //TODO: A*
         tree.addAlgorithm(new Algorithm() {
+
+            TreeNode origin;
+            TreeNode destination;
+
             @Override
             public String getName() {
                 return "A*";
@@ -80,8 +85,65 @@ public class Main {
             @Override
             public LinkedList<TreeNode> computeSolution(TreeNode origin, TreeNode destination) {
                 //Aqui s'ha de computar la solucio i retornar la llista de nodes del cami mes curt.
+                this.origin = origin;
+                this.destination = destination;
+                return Astar(origin, destination);
+            }
+
+
+            private LinkedList<TreeNode> Astar(TreeNode origin, TreeNode destination) {
+                /*
+                HashMap<String, TreeNode> oberts = new HashMap<String, TreeNode>();  // I
+                HashMap<String, TreeNode> tancats = new HashMap<String, TreeNode>(); // cjt_buit
+                boolean end = false;
+                while ((oberts != tancats) && !end) {
+                    n1 = oberts[TreeNode].getCity();
+                    tancats:=inserir(tancats, n1);
+                    si(solució(n1))
+                    llavors fi_procés:=cert;
+                    tractar_solució; / Ara que hem arribat, hem de reconstruir el camí
+                    sinó per_a_tot n2 de successor(n1) fer
+                    si no pertany(n2, unió(oberts, tancats))
+                    llavors oberts:=inserir(oberts, n2); // Marquem l'antecessor
+                    sinó * 1
+                    fi_si
+                            fi_per_a_tot
+                    oberts:=reordenar(oberts); // Reordenació en funció de f(n) = g(n) + h(n)
+                    fi_si
+                }
+                if(!end) {
+                        // No hem trobat cap solucio :(
+                }
+                */
+                double a = f(origin.getConnexions().get(0).getDesti());
                 return null;
             }
+
+            // Funció heurística per calcular el cost de cada node
+            private double f(TreeNode n) {
+                double g = 0;
+                // g sera una informacio que haura de venir al propi node n
+                return g + h(n);
+            }
+
+            private double h(TreeNode n) {
+                // De moment, la h serà un càlcul simple i directa de la distància que hi ha en línia recta des del node actual fins al destí basant-nos en la latitud i longitud
+                return distancia(n.getCity().getLatitude(), this.destination.getCity().getLatitude(), n.getCity().getLongitude(), this.destination.getCity().getLongitude());
+            }
+
+            public static double distancia(double lat1, double lat2, double lon1, double lon2) {
+                final int R = 6371; // Radi de la terra
+                double latDistance = Math.toRadians(lat2 - lat1);
+                double lonDistance = Math.toRadians(lon2 - lon1);
+                double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                        + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                        * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+                double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                return R * c * 1000; // Convertim el resultat a metres
+            }
+
+
+
         });
 
         // TODO: DFS (no funciona)

@@ -71,7 +71,7 @@ public class Main {
 
     private static void addAlgorithms(Tree tree) {
 
-        //TODO: A*
+        //TODO: A* (not working yet)
         tree.addAlgorithm(new Algorithm() {
 
             TreeNode origin;
@@ -92,54 +92,54 @@ public class Main {
 
 
             private LinkedList<TreeNode> Astar(TreeNode origin, TreeNode destination) {
-                /*
-                HashMap<String, TreeNode> oberts = new HashMap<String, TreeNode>();  // I
-                HashMap<String, TreeNode> tancats = new HashMap<String, TreeNode>(); // cjt_buit
+
                 boolean end = false;
-                while ((oberts != tancats) && !end) {
-                    n1 = oberts[TreeNode].getCity();
-                    tancats:=inserir(tancats, n1);
-                    si(solució(n1))
-                    llavors fi_procés:=cert;
-                    tractar_solució; / Ara que hem arribat, hem de reconstruir el camí
-                    sinó per_a_tot n2 de successor(n1) fer
-                    si no pertany(n2, unió(oberts, tancats))
-                    llavors oberts:=inserir(oberts, n2); // Marquem l'antecessor
-                    sinó * 1
-                    fi_si
-                            fi_per_a_tot
-                    oberts:=reordenar(oberts); // Reordenació en funció de f(n) = g(n) + h(n)
-                    fi_si
+                while ((oberts != visitats) && !end) {
+                    TreeNode n1 = oberts.get("AQUI HABRA QUE COGER EL SIGUIENTE");
+                    visitats.put("ALGO QUE NO SE EL QUE",n1);
+                    if (n1 == this.destination) {
+                        end = true;
+                        // TODO: Tractar solucio i reconstruir el cami
+                    } else {
+                            for (int i = 0; i < n1.getConnexions().size(); i++) {
+                                if (n1.getConnexions().get(i).getDesti() == oberts.get("idk")) { // Hem de comprovar que no pertany a la unió(oberts, tancats)
+                                    oberts.put("ALGO QUE TAMPOCO SE EL QUE", n1.getConnexions().get(i).getDesti()); // Marquem l'antecessor
+                                } else {
+                                    Astar(n1,destination);
+                                }
+
+                            }
+                    }
+                    // TODO: Reordenació dels oberts en funció de l'heuristica f(n) = g(n) + h(n),
+                    // De menys distància a més distància
                 }
                 if(!end) {
-                        // No hem trobat cap solucio :(
+                    // No hem trobat cap solucio :(
                 }
-                */
-                double a = f(origin.getConnexions().get(0).getDesti());
-                return null;
+                return null;    // Aqui haurem de retornar la solucio trobada, no un null
             }
 
             // Funció heurística per calcular el cost de cada node
             private double f(TreeNode n) {
                 double g = 0;
-                // g sera una informacio que haura de venir al propi node n
+                // g sera una informacio que haura de venir al propi node n, la distancia des de l'origen
                 return g + h(n);
             }
 
             private double h(TreeNode n) {
-                // De moment, la h serà un càlcul simple i directa de la distància que hi ha en línia recta des del node actual fins al destí basant-nos en la latitud i longitud
-                return distancia(n.getCity().getLatitude(), this.destination.getCity().getLatitude(), n.getCity().getLongitude(), this.destination.getCity().getLongitude());
+                // De moment, la h serà un càlcul simple i directe de la distància que hi ha en línia recta des del node actual fins al destí basant-nos en la latitud i longitud
+                return distancia(n.getCity().getLatitude(), n.getCity().getLongitude(), this.destination.getCity().getLatitude(),  this.destination.getCity().getLongitude());
             }
 
-            public static double distancia(double lat1, double lat2, double lon1, double lon2) {
-                final int R = 6371; // Radi de la terra
-                double latDistance = Math.toRadians(lat2 - lat1);
-                double lonDistance = Math.toRadians(lon2 - lon1);
-                double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                        + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                        * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-                double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                return R * c * 1000; // Convertim el resultat a metres
+            public static double distancia(double lat1, double lon1, double lat2, double lon2)
+            {
+                double R = 6378.137;                        // Radi de la Terra en KM
+                double dLat = (lat2 - lat1) * Math.PI/180;
+                double dLong = (lon2 - lon1) * Math.PI/180;
+                double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLong/2) * Math.sin(dLong/2);
+                double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                //Retornem la distancia en metres
+                return R * c * 1000;
             }
 
 

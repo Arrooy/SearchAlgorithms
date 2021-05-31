@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Scanner;
@@ -74,6 +75,9 @@ public class Main {
         //TODO: A* (not working yet)
         tree.addAlgorithm(new Algorithm() {
 
+            ArrayList<TreeNode> oberts = new ArrayList();
+            ArrayList<TreeNode> tancats = new ArrayList();
+            LinkedList<TreeNode> aux;
             TreeNode origin;
             TreeNode destination;
 
@@ -87,25 +91,28 @@ public class Main {
                 //Aqui s'ha de computar la solucio i retornar la llista de nodes del cami mes curt.
                 this.origin = origin;
                 this.destination = destination;
+                for (Distancia connection: this.origin.getConnexions()) {
+                    this.oberts.add(new TreeNode(connection.getDesti().getCity(), connection.getDesti().getConnexions(), connection.getDistancia(), h(connection.getDesti())));
+                }
                 return Astar(origin, destination);
             }
 
 
-            private LinkedList<TreeNode> Astar(TreeNode origin, TreeNode destination) {
+            private LinkedList<TreeNode> Astar(TreeNode actual, TreeNode destination) {
 
                 boolean end = false;
-                while ((oberts != visitats) && !end) {
-                    TreeNode n1 = oberts.get("AQUI HABRA QUE COGER EL SIGUIENTE");
-                    visitats.put("ALGO QUE NO SE EL QUE",n1);
+                while (!end) {
+                    TreeNode n1 = getLowest();
+                    this.tancats.add(n1);
                     if (n1 == this.destination) {
                         end = true;
                         // TODO: Tractar solucio i reconstruir el cami
                     } else {
-                            for (int i = 0; i < n1.getConnexions().size(); i++) {
-                                if (n1.getConnexions().get(i).getDesti() == oberts.get("idk")) { // Hem de comprovar que no pertany a la unió(oberts, tancats)
-                                    oberts.put("ALGO QUE TAMPOCO SE EL QUE", n1.getConnexions().get(i).getDesti()); // Marquem l'antecessor
+                            for (Distancia n: n1.getConnexions()) {
+                                if (!isTancat(n.getDesti())) {          // Comprovem que el node desti no esta tancat
+                                    this.oberts.add(new TreeNode (n.getDesti().getCity(), n.getDesti().getConnexions(), n.getDistancia() + n1.getG(), h(n.getDesti())));      // Marquem l'antecessor
                                 } else {
-                                    Astar(n1,destination);
+                                    Astar(new TreeNode (n.getDesti().getCity(), n.getDesti().getConnexions(), n.getDistancia() + n1.getG(), h(n.getDesti())), destination);
                                 }
 
                             }
@@ -113,17 +120,12 @@ public class Main {
                     // TODO: Reordenació dels oberts en funció de l'heuristica f(n) = g(n) + h(n),
                     // De menys distància a més distància
                 }
-                if(!end) {
-                    // No hem trobat cap solucio :(
-                }
-                return null;    // Aqui haurem de retornar la solucio trobada, no un null
+                return this.aux;    // Aqui haurem de retornar la solucio trobada, no un null
             }
 
             // Funció heurística per calcular el cost de cada node
             private double f(TreeNode n) {
-                double g = 0;
-                // g sera una informacio que haura de venir al propi node n, la distancia des de l'origen
-                return g + h(n);
+                return n.getG() + n.getH();
             }
 
             private double h(TreeNode n) {
@@ -131,15 +133,35 @@ public class Main {
                 return distancia(n.getCity().getLatitude(), n.getCity().getLongitude(), this.destination.getCity().getLatitude(),  this.destination.getCity().getLongitude());
             }
 
-            public static double distancia(double lat1, double lon1, double lat2, double lon2)
-            {
+            public static double distancia(double lat1, double lon1, double lat2, double lon2) {
                 double R = 6378.137;                        // Radi de la Terra en KM
                 double dLat = (lat2 - lat1) * Math.PI/180;
                 double dLong = (lon2 - lon1) * Math.PI/180;
                 double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLong/2) * Math.sin(dLong/2);
                 double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                //Retornem la distancia en metres
+                //Retornem la distancia en metres, ja que les conexions guarden la distancia en metres
                 return R * c * 1000;
+            }
+
+            // Funcio que retorna el node amb menys cost de tots els oberts
+            private TreeNode getLowest() {
+                TreeNode x = this.oberts.get(0);
+                for (TreeNode a : this.oberts) {
+                    if (a.getH() == 0) {
+                        return a;
+                    }
+                    if (f(a) < f(x)) x = a;
+
+                }
+                return x;
+            }
+
+            // Funcio que comprova si una node figura com a tancat
+            private boolean isTancat(TreeNode n) {
+                for (TreeNode node: this.tancats) {
+                    if (node == n) return true;
+                }
+                return false;
             }
 
 

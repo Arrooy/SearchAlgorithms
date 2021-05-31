@@ -80,12 +80,23 @@ public class Tree {
 
 class TreeNode {
 
+    private double g;
+    private double h;
     private City city;
     private final LinkedList<Distancia> connexions;
 
     public TreeNode(City city) {
+        this.g = this.h = 0;
         this.city = city;
         connexions = new LinkedList<>();
+    }
+
+    public TreeNode(City city,LinkedList<Distancia> connexions , double g, double h) {
+        this.g = g;
+        this.h = h;
+        this.city = city;
+        this.connexions = connexions;
+
     }
 
     public void addDist(Distancia distancia) {
@@ -98,4 +109,17 @@ class TreeNode {
     public LinkedList<Distancia> getConnexions() {
         return this.connexions;
     }
+    public double getG() {
+        return g;
+    }
+    public void setG(double x) {
+        g = x;
+    }
+    public double getH() {
+        return h;
+    }
+    public void setH(double x) {
+        h = x;
+    }
+
 }

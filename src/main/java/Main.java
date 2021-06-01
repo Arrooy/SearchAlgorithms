@@ -53,7 +53,7 @@ public class Main {
             reader.close();
         }else{
             //BCN - VAL - MUR
-            origin = tree.getCity("Barcelona");
+            origin = tree.getCity("Madrid");
             destination = tree.getCity("Murcia");
             algorithm = tree.getAlgorithm("A*");
         }
@@ -75,8 +75,8 @@ public class Main {
         //TODO: A* (not working yet)
         tree.addAlgorithm(new Algorithm() {
 
-            ArrayList<TreeNode> oberts = new ArrayList();
-            ArrayList<TreeNode> tancats = new ArrayList();
+            LinkedList<TreeNode> oberts = new LinkedList();
+            LinkedList<TreeNode> tancats = new LinkedList();
             LinkedList<TreeNode> aux;
             TreeNode origin;
             TreeNode destination;
@@ -104,21 +104,21 @@ public class Main {
                 while (!end) {
                     TreeNode n1 = getLowest();
                     this.tancats.add(n1);
-                    if (n1 == this.destination) {
+                    if (n1.getCity() == this.destination.getCity()) {
                         end = true;
+                        aux = this.tancats;
                         // TODO: Tractar solucio i reconstruir el cami
                     } else {
                             for (Distancia n: n1.getConnexions()) {
-                                if (!isTancat(n.getDesti())) {          // Comprovem que el node desti no esta tancat
+                                if (!isTancat(n.getDesti()) && !isObert(n.getDesti()) && (n.getDesti().getCity() != this.origin.getCity())) {          // Comprovem que el node desti no esta tancat, tampoc esta obert ja (per no repetir) i tampoc es el node origen
                                     this.oberts.add(new TreeNode (n.getDesti().getCity(), n.getDesti().getConnexions(), n.getDistancia() + n1.getG(), h(n.getDesti())));      // Marquem l'antecessor
                                 } else {
-                                    Astar(new TreeNode (n.getDesti().getCity(), n.getDesti().getConnexions(), n.getDistancia() + n1.getG(), h(n.getDesti())), destination);
+                                    //Astar(new TreeNode (n.getDesti().getCity(), n.getDesti().getConnexions(), n.getDistancia() + n1.getG(), h(n.getDesti())), destination);
                                 }
 
                             }
                     }
-                    // TODO: Reordenació dels oberts en funció de l'heuristica f(n) = g(n) + h(n),
-                    // De menys distància a més distància
+
                 }
                 return this.aux;    // Aqui haurem de retornar la solucio trobada, no un null
             }
@@ -145,12 +145,19 @@ public class Main {
 
             // Funcio que retorna el node amb menys cost de tots els oberts
             private TreeNode getLowest() {
-                TreeNode x = this.oberts.get(0);
+                TreeNode x = null;
+                for (int i = 0; i < this.oberts.size(); i++) {
+                    if (!isTancat(this.oberts.get(i))) {
+                        x = this.oberts.get(i);
+                        break;
+                    }
+                }
+
                 for (TreeNode a : this.oberts) {
                     if (a.getH() == 0) {
                         return a;
                     }
-                    if (f(a) < f(x)) x = a;
+                    if (f(a) < f(x) && !isTancat(a)) x = a;
 
                 }
                 return x;
@@ -159,7 +166,15 @@ public class Main {
             // Funcio que comprova si una node figura com a tancat
             private boolean isTancat(TreeNode n) {
                 for (TreeNode node: this.tancats) {
-                    if (node == n) return true;
+                    if (node.getCity() == n.getCity()) return true;
+                }
+                return false;
+            }
+
+            // Funcio que comprova si una ciutat d'node figura com a obert
+            private boolean isObert(TreeNode n) {
+                for (TreeNode node: this.oberts) {
+                    if (node.getCity() == n.getCity()) return true;
                 }
                 return false;
             }

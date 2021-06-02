@@ -1,3 +1,7 @@
+package Logica;
+
+import Model.SearchResult;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -7,5 +11,5 @@ public interface Algorithm {
     LinkedList<TreeNode> solution = new LinkedList<>();
 
     String getName();
-    LinkedList<TreeNode> computeSolution(TreeNode origin, TreeNode destination);
+    SearchResult computeSolution(TreeNode origin, TreeNode destination);
 }

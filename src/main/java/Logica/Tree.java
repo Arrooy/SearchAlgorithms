@@ -1,6 +1,9 @@
+package Logica;
+
 import Model.City;
 import Model.Connection;
 import Model.Routes;
+import Model.SearchResult;
 import com.google.gson.Gson;
 
 import java.io.FileNotFoundException;
@@ -68,7 +71,7 @@ public class Tree {
         return algorithms.get(algorithmName);
     }
 
-    public LinkedList<TreeNode> compute(TreeNode origin, TreeNode destination, Algorithm algorithm){
+    public SearchResult compute(TreeNode origin, TreeNode destination, Algorithm algorithm){
         return algorithm.computeSolution(origin, destination);
     }
 
@@ -76,50 +79,4 @@ public class Tree {
         algorithmNames.append(algorithm.getName()).append(", ");
         this.algorithms.put(algorithm.getName(),algorithm);
     }
-}
-
-class TreeNode {
-
-    private double g;
-    private double h;
-    private City city;
-    private final LinkedList<Distancia> connexions;
-
-    public TreeNode(City city) {
-        this.g = this.h = 0;
-        this.city = city;
-        connexions = new LinkedList<>();
-    }
-
-    public TreeNode(City city,LinkedList<Distancia> connexions , double g, double h) {
-        this.g = g;
-        this.h = h;
-        this.city = city;
-        this.connexions = connexions;
-
-    }
-
-    public void addDist(Distancia distancia) {
-        connexions.add(distancia);
-    }
-
-    public City getCity() {
-        return city;
-    }
-    public LinkedList<Distancia> getConnexions() {
-        return this.connexions;
-    }
-    public double getG() {
-        return g;
-    }
-    public void setG(double x) {
-        g = x;
-    }
-    public double getH() {
-        return h;
-    }
-    public void setH(double x) {
-        h = x;
-    }
-
 }

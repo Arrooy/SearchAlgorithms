@@ -1,3 +1,5 @@
+package Logica;
+
 public class Distancia {
 
     private TreeNode origen;

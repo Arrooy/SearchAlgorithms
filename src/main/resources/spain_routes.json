@@ -29,8 +29,8 @@
       "longitude": -4.421719899999999
     },
     {
-      "name": "Seville",
-      "address": "Seville, Spain",
+      "name": "Sevilla",
+      "address": "Sevilla, Spain",
       "country": "ES",
       "latitude": 37.3890924,
       "longitude": -5.9844589
@@ -131,25 +131,25 @@
     },
     {
       "from": "Málaga",
-      "to": "Seville",
+      "to": "Sevilla",
       "distance": 205844,
       "duration": 8261
     },
     {
-      "from": "Seville",
+      "from": "Sevilla",
       "to": "Málaga",
       "distance": 213531,
       "duration": 8427
     },
     {
-      "from": "Seville",
+      "from": "Sevilla",
       "to": "Salamanca",
       "distance": 464089,
       "duration": 16629
     },
     {
       "from": "Salamanca",
-      "to": "Seville",
+      "to": "Sevilla",
       "distance": 461715,
       "duration": 16263
     },

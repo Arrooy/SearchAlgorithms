@@ -55,9 +55,11 @@ public class Graph {
         }
     }
 
-    public Graph(Graph graph) {
-        this(graph.getFilePath());
-        algorithms = graph.algorithms;
+    // Borra totes les mofificacións del graph
+    public void cleanGraph(){
+        for(GraphNode n : this.nodes.values()){
+            n.clean();
+        }
     }
 
     public GraphNode getCity(String cityName){

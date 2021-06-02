@@ -56,9 +56,6 @@ public class Evaluation {
                 //Executem el test n cops
                 for (int i = 0; i < N_ITERATIONS + WARM_UP; i++) {
 
-                    // Per a cada test s'ha de crear un graph nou, ja que els valors d'aquest es veuen alterats en la computacio
-                    Graph graph = new Graph(this.graph);
-
                     HashMap<String, GraphNode> nodes = graph.getNodes();
 
                     GraphNode origin = nodes.get(test.getOrigin());
@@ -71,22 +68,24 @@ public class Evaluation {
                     long time = System.nanoTime() - before;
                     long actualMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
-                    if (i > WARM_UP){
+                    if (i > WARM_UP) {
                         times.add(time);
                         mems.add(actualMemory - memBef);
                         avgTime += time / 1e9;
                         avgMemory = actualMemory - memBef;
                     }
+
+                    graph.cleanGraph();
                 }
 
-                System.out.println("Average is " + avgTime);
                 results.add(new Results((test.getOrigin() + " - " + test.getDestination()), avgTime / N_ITERATIONS, avgMemory / N_ITERATIONS,
-                        times,mems));
+                        times, mems));
 
                 StringBuilder cityNames = new StringBuilder();
                 for (GraphNode tn : solucio.getRoutes()) {
                     cityNames.append(tn.getCity().getName()).append(", ");
                 }
+
                 if (VERBOSE)
                     System.out.println("Solution found: " + cityNames.substring(0, cityNames.length() - 2) + " (" + (int) solucio.getTotalDistance() + " m)");
 
@@ -103,7 +102,7 @@ public class Evaluation {
                 }
 
                 // Verifiquem que el contingut també es correcte.
-                LinkedList<String> expectedPlaces = test.getExpectedPlaces();
+                LinkedList<String> expectedPlaces = new LinkedList<String>(test.getExpectedPlaces());
                 boolean matched;
 
                 for (GraphNode n : solucio.getRoutes()) {

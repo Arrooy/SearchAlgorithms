@@ -45,4 +45,8 @@ public class Distancia {
     public void setDuracio(Integer duracio) {
         this.duracio = duracio;
     }
+
+    public String key() {
+        return origen.key()+desti.key();
+    }
 }

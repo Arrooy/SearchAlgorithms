@@ -21,6 +21,11 @@ public class GraphNode {
         this.parent = null;
     }
 
+    public void clean(){
+        this.g = this.h = 0;
+        this.parent = null;
+    }
+
     public void addDist(Distancia distancia) {
         connexions.add(distancia);
     }
@@ -34,24 +39,33 @@ public class GraphNode {
     public double getG() {
         return g;
     }
-    public void setG(double x) {
-        g = x;
-    }
+
     public double getH() {
         return h;
-    }
-    public void setH(double x) {
-        h = x;
     }
 
     public GraphNode getParent() {
         return parent;
     }
+
+
+    public void setG(double x) {
+        g = x;
+    }
+    public void setH(double x) {
+        h = x;
+    }
     public void setParent(GraphNode parent) {
         this.parent = parent;
     }
 
+
     public String key() {
         return getCity().getName();
+    }
+
+    @Override
+    public String toString() {
+        return city.toString();
     }
 }

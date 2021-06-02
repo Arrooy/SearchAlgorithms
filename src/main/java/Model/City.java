@@ -70,4 +70,9 @@ public class City {
         City city = (City) o;
         return name.equals(city.name) && address.equals(city.address) && country.equals(city.country) && latitude.equals(city.latitude) && longitude.equals(city.longitude);
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

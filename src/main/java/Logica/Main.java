@@ -11,11 +11,11 @@ public class Main {
     private static boolean TESTING = true;
 
     public static void main(String[] args) {
-        Tree tree = new Tree("src/main/resources/spain_routes.json");
+        Graph graph = new Graph("src/main/resources/spain_routes.json");
 
-        defineAlgorithms(tree);
+        defineAlgorithms(graph);
 
-        TreeNode origin, destination = null;
+        GraphNode origin, destination = null;
         Algorithm algorithm = null;
 
         if (!TESTING) {
@@ -23,9 +23,9 @@ public class Main {
             boolean keepLooping;
 
             do {
-                System.out.println("Origin city? Possible Origins: [" + tree.getPossibleCities() + "]");
+                System.out.println("Origin city? Possible Origins: [" + graph.getPossibleCities() + "]");
                 System.out.print("Origin: ");
-                origin = tree.getCity(reader.next());
+                origin = graph.getCity(reader.next());
                 keepLooping = origin == null;
 
                 if (keepLooping) {
@@ -33,9 +33,9 @@ public class Main {
                     continue;
                 }
 
-                System.out.println("Destination city? Possible Destinations: [" + tree.getPossibleCities() + "]");
+                System.out.println("Destination city? Possible Destinations: [" + graph.getPossibleCities() + "]");
                 System.out.print("Destination: ");
-                destination = tree.getCity(reader.next());
+                destination = graph.getCity(reader.next());
                 keepLooping = destination == null;
 
                 if (keepLooping) {
@@ -43,9 +43,9 @@ public class Main {
                     continue;
                 }
 
-                System.out.println("Search Logica.Algorithm? Possible Algorithms: [" + tree.getPossibleAlgorithms() + "]");
+                System.out.println("Search Logica.Algorithm? Possible Algorithms: [" + graph.getPossibleAlgorithms() + "]");
                 System.out.print("Logica.Algorithm: ");
-                algorithm = tree.getAlgorithm(reader.next());
+                algorithm = graph.getAlgorithm(reader.next());
                 keepLooping = algorithm == null;
 
                 if (keepLooping) {
@@ -56,31 +56,31 @@ public class Main {
             reader.close();
         } else {
             //BCN - VAL - MUR
-            origin = tree.getCity("Barcelona");
-            destination = tree.getCity("Sevilla");
-            algorithm = tree.getAlgorithm("A*");
+            origin = graph.getCity("A Coruña");
+            destination = graph.getCity("Madrid");
+            algorithm = graph.getAlgorithm("A*");
         }
         // Ja sabem el Node origen, el node desti i el algoritme a aplicar.
-        SearchResult solucio = tree.compute(origin, destination, algorithm);
-        LinkedList<TreeNode> cami_mes_curt = solucio.getRoutes();
+        SearchResult solucio = graph.compute(origin, destination, algorithm);
+        LinkedList<GraphNode> cami_mes_curt = solucio.getRoutes();
 
         // Mostrem el resultat
 
         StringBuilder cityNames = new StringBuilder();
-        for (TreeNode tn : cami_mes_curt) {
+        for (GraphNode tn : cami_mes_curt) {
             cityNames.append(tn.getCity().getName()).append(", ");
         }
 
-        System.out.println("Fastest route: " + cityNames.substring(0, cityNames.length() - 2));
+        System.out.println("Fastest route (" + (int)solucio.getTotalDistance() + " m): " + cityNames.substring(0, cityNames.length() - 2));
     }
 
-    private static void defineAlgorithms(Tree tree) {
+    private static void defineAlgorithms(Graph graph) {
 
-        tree.addAlgorithm(new Algorithm() {
+        graph.addAlgorithm(new Algorithm() {
 
-            private LinkedList<TreeNode> oberts = new LinkedList();
-            private LinkedList<TreeNode> tancats = new LinkedList();
-            private TreeNode destination;
+            private LinkedList<GraphNode> oberts = new LinkedList();
+            private LinkedList<GraphNode> tancats = new LinkedList();
+            private GraphNode destination;
 
             @Override
             public String getName() {
@@ -88,12 +88,13 @@ public class Main {
             }
 
             @Override
-            public SearchResult computeSolution(TreeNode origin, TreeNode destination) {
+            public SearchResult computeSolution(GraphNode origin, GraphNode destination) {
                 //Aqui s'ha de computar la solucio i retornar la llista de nodes del cami mes curt.
 
                 this.destination = destination;
+                this.tancats.add(origin);
                 for (Distancia connection : origin.getConnexions()) {
-                    this.oberts.add(new TreeNode(connection.getDesti().getCity(), connection.getDesti().getConnexions(), connection.getDistancia(), h(connection.getDesti()), origin,0));
+                    addToOpenList(origin, connection);
                 }
                 return Astar();
             }
@@ -101,48 +102,62 @@ public class Main {
 
             private SearchResult Astar() {
                 while (!this.oberts.isEmpty()) {
-                    TreeNode n1 = getBestNode();
+                    GraphNode n1 = getBestNode();
                     // Openset to closed set.
                     this.oberts.remove(n1);
                     this.tancats.add(n1);
 
-                    if (n1.getCity() == this.destination.getCity()) {
+                    if (n1.getCity().equals(this.destination.getCity())) {
                         return generateResult(n1);
                     } else {
                         for (Distancia n : n1.getConnexions()) {
-                            TreeNode node = n.getDesti();
+                            GraphNode node = n.getDesti();
                             // Comprovem que el node desti no esta tancat, tampoc esta obert ja (per no repetir)
                             if (!isTancat(node) && !isObert(node)) {
                                 // S'afegeix el node a la llista d'oberts amb la referencia al seu pare.
-                                this.oberts.add(new TreeNode(node.getCity(), node.getConnexions(), n.getDistancia() + n1.getG(), h(node), n1,0));
+                                addToOpenList(n1,n);
                             }
                         }
                     }
                 }
 
-                // No s'ha trobat el comí.
+                // No s'ha trobat el camí.
                 return new SearchResult();
             }
 
-            private SearchResult generateResult(TreeNode nodeFinal) {
-                LinkedList<TreeNode> result = new LinkedList<>();
-                double distanciaTotal = 0;
+            private void addToOpenList(GraphNode origin, Distancia connection){
+                GraphNode newNode = connection.getDesti();
+
+                newNode.setParent(origin);
+
+                newNode.setG(connection.getDistancia() + origin.getG());
+                newNode.setH(h(newNode));
+
+                this.oberts.add(newNode);
+            }
+
+            private SearchResult generateResult(GraphNode nodeFinal) {
+                LinkedList<GraphNode> result = new LinkedList<>();
+
                 result.add(this.destination);
-                TreeNode parent = nodeFinal.getParent();
+
+                GraphNode parent = nodeFinal.getParent();
+
                 while (parent != null){
                     result.add(parent);
                     parent = parent.getParent();
                 }
+
                 Collections.reverse(result);
-                return new SearchResult(result, distanciaTotal);
+                return new SearchResult(result, nodeFinal.getG());
             }
 
             // Funció heurística per calcular el cost de cada node
-            private double f(TreeNode n) {
+            private double f(GraphNode n) {
                 return n.getG() + n.getH();
             }
 
-            private double h(TreeNode n) {
+            private double h(GraphNode n) {
                 // De moment, la h serà un càlcul simple i directe de la distància que hi ha en línia recta des del node actual fins al destí basant-nos en la latitud i longitud
                 return distancia(n.getCity().getLatitude(), n.getCity().getLongitude(), this.destination.getCity().getLatitude(), this.destination.getCity().getLongitude());
             }
@@ -158,11 +173,11 @@ public class Main {
             }
 
             // Funcio que retorna el node amb menys cost de tots els oberts
-            private TreeNode getBestNode() {
+            private GraphNode getBestNode() {
                 double minCost = 0;
-                TreeNode bestNode = null;
+                GraphNode bestNode = null;
                 boolean firstIteration = true;
-                for (TreeNode a : this.oberts) {
+                for (GraphNode a : this.oberts) {
                     if (firstIteration) {
                         minCost = f(a);
                         bestNode = a;
@@ -181,16 +196,16 @@ public class Main {
             }
 
             // Funcio que comprova si una node figura com a tancat
-            private boolean isTancat(TreeNode n) {
-                for (TreeNode node : this.tancats) {
+            private boolean isTancat(GraphNode n) {
+                for (GraphNode node : this.tancats) {
                     if (node.getCity() == n.getCity()) return true;
                 }
                 return false;
             }
 
             // Funcio que comprova si una ciutat d'node figura com a obert
-            private boolean isObert(TreeNode n) {
-                for (TreeNode node : this.oberts) {
+            private boolean isObert(GraphNode n) {
+                for (GraphNode node : this.oberts) {
                     if (node.getCity() == n.getCity()) return true;
                 }
                 return false;
@@ -200,9 +215,9 @@ public class Main {
         // TODO: DFS (no funciona)
         // Resulta que DFS serveix per a rtgobar el cami pero no hi ha res que asseguri que el cami es el mes curt.
         // Ens hem de petar tot l'espai de cerca. POtser algu li interesa matarse a ferho.
-//        tree.addAlgorithm(new Algorithm() {
+//        graph.addAlgorithm(new Algorithm() {
 //
-//            LinkedList<TreeNode> aux;
+//            LinkedList<GraphNode> aux;
 //            int shortestList = 0;
 //
 //            @Override
@@ -211,14 +226,14 @@ public class Main {
 //            }
 //
 //            @Override
-//            public SearchResult computeSolution(TreeNode origin, TreeNode destination) {
+//            public SearchResult computeSolution(GraphNode origin, GraphNode destination) {
 //                return dfs(origin, destination);
 //            }
 //
-//            private SearchResult dfs(TreeNode actual, TreeNode dessss) {
+//            private SearchResult dfs(GraphNode actual, GraphNode dessss) {
 //                if (actual.getCity().getName().equals(dessss.getCity().getName())) {
 //                    System.out.println("FOUND MURCIA, tornant");
-//                    LinkedList<TreeNode> list = new LinkedList<>();
+//                    LinkedList<GraphNode> list = new LinkedList<>();
 //                    list.add(actual);
 //                    return list;
 //                }
@@ -227,9 +242,9 @@ public class Main {
 //                System.out.println("Visitat " + actual.getCity().getName());
 //                for (Distancia d : actual.getConnexions()) {
 //                    if (visitats.get(d.getDesti().getCity().getName()) == null) {
-//                        LinkedList<TreeNode> resList = dfs(d.getDesti(), dessss);
+//                        LinkedList<GraphNode> resList = dfs(d.getDesti(), dessss);
 //                        if (resList != null && resList.size() < shortestList) {
-//                            aux = (LinkedList<TreeNode>) resList.clone();
+//                            aux = (LinkedList<GraphNode>) resList.clone();
 //                            shortestList = resList.size();
 //                        }
 //                    }

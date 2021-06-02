@@ -9,18 +9,17 @@ import com.google.gson.Gson;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
-public class Tree {
+public class Graph {
 
-    private HashMap<String, TreeNode> nodes;
+    private HashMap<String, GraphNode> nodes;
     private HashMap<String, Algorithm> algorithms;
 
     private StringBuilder originNames;
     private StringBuilder algorithmNames;
     
-    public Tree(String file_route) {
+    public Graph(String file_route) {
         Gson gson = new Gson();
         nodes = new HashMap<>();
         algorithms = new HashMap<>();
@@ -34,20 +33,18 @@ public class Tree {
             List<Connection> connections = r.getConnections();
 
             for (City c : cities) {
-                TreeNode tn = new TreeNode(c);
+                GraphNode tn = new GraphNode(c);
                 nodes.put(c.getName(), tn);
                 originNames.append(c.getName()).append(", ");
             }
 
             for (Connection c : connections){
-                TreeNode origen = nodes.get(c.getFrom());
-                TreeNode desti = nodes.get(c.getTo());
+                GraphNode origen = nodes.get(c.getFrom());
+                GraphNode desti = nodes.get(c.getTo());
 
                 Distancia distanciaAB = new Distancia(origen, desti, c.getDistance(), c.getDuration());
-                Distancia distanciaBA = new Distancia(desti, origen, c.getDistance(), c.getDuration());
 
                 origen.addDist(distanciaAB);
-                desti.addDist(distanciaBA);
             }
 
         } catch (FileNotFoundException e) {
@@ -55,7 +52,7 @@ public class Tree {
         }
     }
 
-    public TreeNode getCity(String cityName){
+    public GraphNode getCity(String cityName){
         return this.nodes.get(cityName);
     }
 
@@ -71,7 +68,7 @@ public class Tree {
         return algorithms.get(algorithmName);
     }
 
-    public SearchResult compute(TreeNode origin, TreeNode destination, Algorithm algorithm){
+    public SearchResult compute(GraphNode origin, GraphNode destination, Algorithm algorithm){
         return algorithm.computeSolution(origin, destination);
     }
 

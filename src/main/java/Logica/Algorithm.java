@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public interface Algorithm {
-    HashMap<String, TreeNode> oberts = new HashMap<String, TreeNode>();     // I
-    HashMap<String, TreeNode> visitats = new HashMap<String,TreeNode>();    // cjt_buit
-    LinkedList<TreeNode> solution = new LinkedList<>();
+    HashMap<String, GraphNode> oberts = new HashMap<String, GraphNode>();     // I
+    HashMap<String, GraphNode> visitats = new HashMap<String, GraphNode>();    // cjt_buit
+    LinkedList<GraphNode> solution = new LinkedList<>();
 
     String getName();
-    SearchResult computeSolution(TreeNode origin, TreeNode destination);
+    SearchResult computeSolution(GraphNode origin, GraphNode destination);
 }

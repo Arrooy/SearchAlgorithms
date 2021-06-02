@@ -1,25 +1,24 @@
 package Model;
 
-import Logica.TreeNode;
+import Logica.GraphNode;
+
 import java.util.LinkedList;
 
 public class SearchResult {
-    private final LinkedList<TreeNode> routes;
-    double totalDistance;
-    boolean seachFailed;
+    private final LinkedList<GraphNode> routes;
+    private final double totalDistance;
 
     public SearchResult() {
-        seachFailed = true;
+        totalDistance = 0;
         routes = null;
     }
 
-    public SearchResult(LinkedList<TreeNode> routes, double totalDistance) {
+    public SearchResult(LinkedList<GraphNode> routes, double totalDistance) {
         this.routes = routes;
         this.totalDistance = totalDistance;
-        seachFailed = false;
     }
 
-    public LinkedList<TreeNode> getRoutes() {
+    public LinkedList<GraphNode> getRoutes() {
         return routes;
     }
 

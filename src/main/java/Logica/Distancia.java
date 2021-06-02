@@ -2,31 +2,31 @@ package Logica;
 
 public class Distancia {
 
-    private TreeNode origen;
-    private TreeNode desti;
+    private GraphNode origen;
+    private GraphNode desti;
     private Integer distancia;
     private Integer duracio;
 
-    public Distancia(TreeNode origen, TreeNode desti, Integer distancia, Integer duracio) {
+    public Distancia(GraphNode origen, GraphNode desti, Integer distancia, Integer duracio) {
         this.origen = origen;
         this.desti = desti;
         this.distancia = distancia;
         this.duracio = duracio;
     }
 
-    public TreeNode getOrigen() {
+    public GraphNode getOrigen() {
         return origen;
     }
 
-    public void setOrigen(TreeNode origen) {
+    public void setOrigen(GraphNode origen) {
         this.origen = origen;
     }
 
-    public TreeNode getDesti() {
+    public GraphNode getDesti() {
         return desti;
     }
 
-    public void setDesti(TreeNode desti) {
+    public void setDesti(GraphNode desti) {
         this.desti = desti;
     }
 

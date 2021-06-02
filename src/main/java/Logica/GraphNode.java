@@ -4,32 +4,21 @@ import Model.City;
 
 import java.util.LinkedList;
 
-public class TreeNode {
+public class GraphNode {
 
-    private final double parentDistance;
-    private double g;
-    private double h;
-    private City city;
+    private final City city;
     private final LinkedList<Distancia> connexions;
 
-    private TreeNode parent;
+    private double g;
+    private double h;
 
-    public TreeNode(City city) {
+    private GraphNode parent;
+
+    public GraphNode(City city) {
         this.g = this.h = 0;
         this.city = city;
         connexions = new LinkedList<>();
-
         this.parent = null;
-        this.parentDistance = 0;
-    }
-
-    public TreeNode(City city,LinkedList<Distancia> connexions , double g, double h, TreeNode parent, double parentDistance) {
-        this.g = g;
-        this.h = h;
-        this.city = city;
-        this.connexions = connexions;
-        this.parent = parent;
-        this.parentDistance = parentDistance;
     }
 
     public void addDist(Distancia distancia) {
@@ -55,7 +44,10 @@ public class TreeNode {
         h = x;
     }
 
-    public TreeNode getParent() {
+    public GraphNode getParent() {
         return parent;
+    }
+    public void setParent(GraphNode parent) {
+        this.parent = parent;
     }
 }

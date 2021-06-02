@@ -50,4 +50,8 @@ public class GraphNode {
     public void setParent(GraphNode parent) {
         this.parent = parent;
     }
+
+    public String key() {
+        return getCity().getName();
+    }
 }

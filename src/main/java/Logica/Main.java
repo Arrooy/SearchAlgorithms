@@ -1,14 +1,16 @@
 package Logica;
 
 import Model.SearchResult;
+import Test.Evaluation;
+import Test.Test;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Scanner;
+import java.io.IOException;
+import java.util.*;
 
 public class Main {
 
     private static boolean TESTING = true;
+    private static boolean EXECUTE_EVALUATION = true;
 
     public static void main(String[] args) {
         Graph graph = new Graph("src/main/resources/spain_routes.json");
@@ -43,22 +45,39 @@ public class Main {
                     continue;
                 }
 
-                System.out.println("Search Logica.Algorithm? Possible Algorithms: [" + graph.getPossibleAlgorithms() + "]");
-                System.out.print("Logica.Algorithm: ");
+                System.out.println("Search Algorithm? Possible Algorithms: [" + graph.getPossibleAlgorithms() + "]");
+                System.out.print("Algorithm: ");
                 algorithm = graph.getAlgorithm(reader.next());
                 keepLooping = algorithm == null;
 
                 if (keepLooping) {
-                    System.out.println("Logica.Algorithm not found!");
+                    System.out.println("Algorithm not found!");
                 }
 
             } while (keepLooping);
             reader.close();
-        } else {
+        } else if(!EXECUTE_EVALUATION) {
+
             //BCN - VAL - MUR
-            origin = graph.getCity("A Coruña");
-            destination = graph.getCity("Madrid");
+            origin = graph.getCity("Zaragoza");
+            destination = graph.getCity("Málaga");
             algorithm = graph.getAlgorithm("A*");
+
+        }else{
+            LinkedList<Test> tests = new LinkedList<Test>();
+            tests.add(new Test("Valladolid","Zaragoza", 650668, "Valladolid", "Salamanca", "Madrid", "Zaragoza"));
+            tests.add(new Test("Zaragoza","Málaga", 1210201, "Zaragoza", "Madrid", "Salamanca", "Sevilla", "Málaga"));
+            tests.add(new Test("Barcelona","Sevilla", 1190908, "Barcelona", "Valencia", "Murcia", "Málaga", "Sevilla"));
+            tests.add(new Test("A Coruña","Madrid", 795685, "A Coruña", "León", "Valladolid", "Salamanca", "Madrid"));
+
+            Evaluation evaluation = new Evaluation(graph,tests);
+
+            try {
+                evaluation.execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
         }
         // Ja sabem el Node origen, el node desti i el algoritme a aplicar.
         SearchResult solucio = graph.compute(origin, destination, algorithm);
@@ -78,8 +97,8 @@ public class Main {
 
         graph.addAlgorithm(new Algorithm() {
 
-            private LinkedList<GraphNode> oberts = new LinkedList();
-            private LinkedList<GraphNode> tancats = new LinkedList();
+            private HashMap<String, GraphNode> open;
+            private HashMap<String, GraphNode> closed;
             private GraphNode destination;
 
             @Override
@@ -87,25 +106,30 @@ public class Main {
                 return "A*";
             }
 
+            //Aqui s'ha de computar la solucio i retornar la llista de nodes del cami mes curt.
             @Override
             public SearchResult computeSolution(GraphNode origin, GraphNode destination) {
-                //Aqui s'ha de computar la solucio i retornar la llista de nodes del cami mes curt.
+                open = new HashMap<>();
+                closed = new HashMap<>();
 
                 this.destination = destination;
-                this.tancats.add(origin);
+                this.closed.put(origin.key(), origin);
                 for (Distancia connection : origin.getConnexions()) {
-                    addToOpenList(origin, connection);
+                    addToOpenDataStructure(origin, connection);
                 }
                 return Astar();
             }
 
 
             private SearchResult Astar() {
-                while (!this.oberts.isEmpty()) {
+                while (!this.open.isEmpty()) {
+
+                    // Gather best option
                     GraphNode n1 = getBestNode();
-                    // Openset to closed set.
-                    this.oberts.remove(n1);
-                    this.tancats.add(n1);
+
+                    // Openset to closed set swap
+                    this.open.remove(n1.key());
+                    this.closed.put(n1.key(),n1);
 
                     if (n1.getCity().equals(this.destination.getCity())) {
                         return generateResult(n1);
@@ -114,8 +138,8 @@ public class Main {
                             GraphNode node = n.getDesti();
                             // Comprovem que el node desti no esta tancat, tampoc esta obert ja (per no repetir)
                             if (!isTancat(node) && !isObert(node)) {
-                                // S'afegeix el node a la llista d'oberts amb la referencia al seu pare.
-                                addToOpenList(n1,n);
+                                // S'afegeix el node a la llista d'open amb la referencia al seu pare.
+                                addToOpenDataStructure(n1,n);
                             }
                         }
                     }
@@ -125,7 +149,7 @@ public class Main {
                 return new SearchResult();
             }
 
-            private void addToOpenList(GraphNode origin, Distancia connection){
+            private void addToOpenDataStructure(GraphNode origin, Distancia connection){
                 GraphNode newNode = connection.getDesti();
 
                 newNode.setParent(origin);
@@ -133,7 +157,7 @@ public class Main {
                 newNode.setG(connection.getDistancia() + origin.getG());
                 newNode.setH(h(newNode));
 
-                this.oberts.add(newNode);
+                this.open.put(newNode.key(),newNode);
             }
 
             private SearchResult generateResult(GraphNode nodeFinal) {
@@ -172,12 +196,25 @@ public class Main {
                 return R * c * 1000;
             }
 
-            // Funcio que retorna el node amb menys cost de tots els oberts
+            // Funcio que retorna el node amb menys cost de tots els open
             private GraphNode getBestNode() {
+//                long time = System.nanoTime();
+//                var res = Collections.min(open.entrySet(), new Comparator<Map.Entry<String, GraphNode>>() {
+//                    @Override
+//                    public int compare(Map.Entry<String, GraphNode> a, Map.Entry<String, GraphNode> b) {
+//                        return (int)(f(a.getValue()) - f(b.getValue()));
+//                    }
+//                }).getValue();
+//                long t = System.nanoTime() - time;
+//                System.out.println("Size was " + open.keySet().size() + " Elapsed time is " + t);
+//                return res;
+//                long time = System.nanoTime();
+
                 double minCost = 0;
                 GraphNode bestNode = null;
                 boolean firstIteration = true;
-                for (GraphNode a : this.oberts) {
+
+                for (GraphNode a : this.open.values()) {
                     if (firstIteration) {
                         minCost = f(a);
                         bestNode = a;
@@ -192,23 +229,20 @@ public class Main {
                         }
                     }
                 }
+
+//                long t = System.nanoTime() - time;
+//                System.out.println("Size was " + open.keySet().size() + " Elapsed time is " + t);
                 return bestNode;
             }
 
             // Funcio que comprova si una node figura com a tancat
             private boolean isTancat(GraphNode n) {
-                for (GraphNode node : this.tancats) {
-                    if (node.getCity() == n.getCity()) return true;
-                }
-                return false;
+                return this.closed.get(n.key()) != null;
             }
 
             // Funcio que comprova si una ciutat d'node figura com a obert
             private boolean isObert(GraphNode n) {
-                for (GraphNode node : this.oberts) {
-                    if (node.getCity() == n.getCity()) return true;
-                }
-                return false;
+                return this.open.get(n.key()) != null;
             }
         });
 

@@ -16,10 +16,13 @@ public class Graph {
     private HashMap<String, GraphNode> nodes;
     private HashMap<String, Algorithm> algorithms;
 
+
     private StringBuilder originNames;
     private StringBuilder algorithmNames;
-    
+    private final String file_route;
+
     public Graph(String file_route) {
+        this.file_route = file_route;
         Gson gson = new Gson();
         nodes = new HashMap<>();
         algorithms = new HashMap<>();
@@ -52,6 +55,11 @@ public class Graph {
         }
     }
 
+    public Graph(Graph graph) {
+        this(graph.getFilePath());
+        algorithms = graph.algorithms;
+    }
+
     public GraphNode getCity(String cityName){
         return this.nodes.get(cityName);
     }
@@ -75,5 +83,17 @@ public class Graph {
     public void addAlgorithm(Algorithm algorithm) {
         algorithmNames.append(algorithm.getName()).append(", ");
         this.algorithms.put(algorithm.getName(),algorithm);
+    }
+
+    public HashMap<String, Algorithm> getAlgorithms() {
+        return algorithms;
+    }
+
+    public HashMap<String, GraphNode> getNodes() {
+        return nodes;
+    }
+
+    public String getFilePath() {
+        return file_route;
     }
 }
